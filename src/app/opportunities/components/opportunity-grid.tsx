@@ -16,6 +16,7 @@ export interface OpportunityGridProps {
   type: OpportunityType
   onDeposit?: (opportunity: Opportunity) => void
   onStartOnboarding?: (opportunity: Opportunity) => void
+  onViewDetails?: (opportunity: Opportunity) => void
   className?: string
 }
 
@@ -91,6 +92,7 @@ export function OpportunityGrid({
   type,
   onDeposit,
   onStartOnboarding,
+  onViewDetails,
   className,
 }: OpportunityGridProps) {
   // Filter, sort, and group opportunities
@@ -119,6 +121,7 @@ export function OpportunityGrid({
           opportunities={grouped[category]}
           onDeposit={onDeposit}
           onStartOnboarding={onStartOnboarding}
+          onViewDetails={onViewDetails}
           hideInstitutionalTag={type === 'institutional'}
         />
       ))}

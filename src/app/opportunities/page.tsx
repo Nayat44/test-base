@@ -7,7 +7,6 @@ import {
   TabsTrigger,
 } from '@/components/ui/tabs'
 import {
-  FeaturedOpportunities,
   OpportunityGrid,
   FilterBar,
   DepositModal,
@@ -44,6 +43,11 @@ export default function OpportunitiesPage() {
     setOnboardingModalOpen(true)
   }
 
+  const handleViewDetails = (opportunity: Opportunity) => {
+    console.log('Viewing details for', opportunity.asset, 'by', opportunity.protocol)
+    // In real app, would navigate to details page
+  }
+
   const handleConfirmDeposit = (opportunity: Opportunity, amount: string) => {
     console.log('Depositing', amount, opportunity.asset, 'into', opportunity.protocol)
     // In real app, would call contract here
@@ -51,23 +55,6 @@ export default function OpportunitiesPage() {
 
   return (
     <div className="flex flex-col gap-150 p-150 max-w-[1000px] min-w-[800px] mx-auto">
-      {/* Page Header */}
-      <div className="flex flex-col gap-50">
-        <h1 className="text-heading-h3 font-semibold text-fg-primary">
-          Lending Opportunities
-        </h1>
-        <p className="text-body-base text-fg-secondary">
-          Discover and manage DeFi lending opportunities across protocols
-        </p>
-      </div>
-
-      {/* Featured Opportunities */}
-      <FeaturedOpportunities
-        opportunities={opportunities}
-        onDeposit={handleDeposit}
-        onStartOnboarding={handleStartOnboarding}
-      />
-
       {/* Opportunities Section */}
       <div className="flex flex-col gap-100">
         {/* Type Tabs + Filters */}
@@ -100,6 +87,7 @@ export default function OpportunitiesPage() {
           type={opportunityType}
           onDeposit={handleDeposit}
           onStartOnboarding={handleStartOnboarding}
+          onViewDetails={handleViewDetails}
         />
       </div>
 

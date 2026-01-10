@@ -4,7 +4,7 @@ import * as React from 'react'
 import { Select as BaseSelect } from '@base-ui-components/react/select'
 import { Field } from '@base-ui-components/react/field'
 import { type VariantProps } from 'tailwind-variants'
-import { ChevronDown, Check } from 'lucide-react'
+import { ChevronDown } from 'lucide-react'
 import { cn, tv } from '@/lib/utils'
 
 // =============================================================================
@@ -36,6 +36,10 @@ const selectTriggerVariants = tv({
       ghost: [
         'bg-transparent text-fg-primary border-transparent',
         'hover:bg-subtle',
+      ],
+      tertiary: [
+        'bg-secondary text-fg-primary border-transparent',
+        'hover:bg-muted',
       ],
     },
     size: {
@@ -133,7 +137,7 @@ const selectErrorVariants = tv({
 
 const selectPopupVariants = tv({
   base: [
-    'z-50 min-w-[8rem] overflow-hidden rounded-md border border-border-subtle bg-surface text-fg-primary shadow-300',
+    'z-50 w-fit overflow-hidden rounded-md border border-border-subtle bg-surface text-fg-primary shadow-300',
     'p-50',
     'data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2',
   ],
@@ -141,8 +145,10 @@ const selectPopupVariants = tv({
 
 const selectItemVariants = tv({
   base: [
-    'relative flex w-full cursor-default select-none items-center rounded-sm py-50 pl-200 pr-50 text-label-sm outline-none',
-    'data-[highlighted]:bg-subtle data-[highlighted]:text-fg-primary',
+    'relative flex w-full cursor-pointer select-none items-center rounded-pill py-50 pl-75 pr-75 text-label-sm outline-none whitespace-nowrap',
+    'bg-transparent text-fg-primary',
+    'data-[highlighted]:bg-primary',
+    'active:bg-secondary',
     'data-[disabled]:pointer-events-none data-[disabled]:opacity-disabled',
   ],
 })
@@ -296,17 +302,20 @@ const SelectItem = React.forwardRef<
     className={cn(selectItemVariants(), className)}
     {...props}
   >
-    <BaseSelect.ItemIndicator className="absolute left-50 flex h-3.5 w-3.5 items-center justify-center">
-      <Check className="size-icon-xs" />
-    </BaseSelect.ItemIndicator>
     <BaseSelect.ItemText>{children}</BaseSelect.ItemText>
   </BaseSelect.Item>
 ))
 SelectItem.displayName = 'SelectItem'
 
 // Simplified Wrapper for common usage
+interface SelectOption {
+  value: string
+  label: string
+  icon?: string | React.ReactNode | null
+}
+
 interface SelectProps extends React.ComponentProps<typeof SelectRoot> {
-  options?: { value: string; label: string }[]
+  options?: SelectOption[]
   placeholder?: string
   size?: SelectSize
   variant?: VariantProps<typeof selectTriggerVariants>['variant']
@@ -342,6 +351,15 @@ const Select = React.forwardRef<HTMLButtonElement, SelectProps>(
     // Determine if we should wrap with field components
     const hasFieldElements = label || description || helperText || error
 
+    // Helper to render icon (supports both image paths and React nodes)
+    const renderIcon = (icon: string | React.ReactNode | null | undefined) => {
+      if (!icon) return null
+      if (typeof icon === 'string') {
+        return <img src={icon} alt="" className="size-icon-sm" />
+      }
+      return <span className="size-icon-sm flex items-center justify-center">{icon}</span>
+    }
+
     const selectContent = (
       <>
         <SelectTrigger ref={ref} className={triggerClassName} size={size} variant={variant} error={error}>
@@ -351,14 +369,30 @@ const Select = React.forwardRef<HTMLButtonElement, SelectProps>(
               if (Array.isArray(val)) {
                 return val.map((v) => options?.find((o) => o.value === v)?.label || v).join(', ')
               }
-              return options?.find((o) => o.value === val)?.label || val
+              const selectedOption = options?.find((o) => o.value === val)
+              if (selectedOption?.icon) {
+                return (
+                  <span className="flex items-center gap-50">
+                    {renderIcon(selectedOption.icon)}
+                    <span>{selectedOption.label}</span>
+                  </span>
+                )
+              }
+              return selectedOption?.label || val
             }}
           </SelectValue>
         </SelectTrigger>
         <SelectContent>
           {options?.map((option) => (
             <SelectItem key={option.value} value={option.value}>
-              {option.label}
+              {option.icon ? (
+                <span className="flex items-center gap-50">
+                  {renderIcon(option.icon)}
+                  <span>{option.label}</span>
+                </span>
+              ) : (
+                option.label
+              )}
             </SelectItem>
           ))}
         </SelectContent>

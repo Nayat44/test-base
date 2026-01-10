@@ -15,6 +15,7 @@ export interface AssetGroupProps {
   opportunities: Opportunity[]
   onDeposit?: (opportunity: Opportunity) => void
   onStartOnboarding?: (opportunity: Opportunity) => void
+  onViewDetails?: (opportunity: Opportunity) => void
   className?: string
   hideInstitutionalTag?: boolean
 }
@@ -28,6 +29,7 @@ export function AssetGroup({
   opportunities,
   onDeposit,
   onStartOnboarding,
+  onViewDetails,
   className,
   hideInstitutionalTag = false,
 }: AssetGroupProps) {
@@ -53,6 +55,7 @@ export function AssetGroup({
             opportunity={opportunity}
             onDeposit={onDeposit}
             onStartOnboarding={onStartOnboarding}
+            onViewDetails={onViewDetails}
             hideInstitutionalTag={hideInstitutionalTag}
           />
         ))}

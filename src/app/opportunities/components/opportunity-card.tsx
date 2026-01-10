@@ -4,10 +4,8 @@ import * as React from 'react'
 import { cn } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
 import { TokenLogo } from '@/components/ui/token-logo'
-import { Pill } from '@/components/ui/pill'
 import type { Opportunity } from '../types'
-import { formatTVL, formatAPY, getChainLabel } from '../mock-data'
-import { OnboardingBadge } from './onboarding-badge'
+import { formatTVL, formatAPY } from '../mock-data'
 import { LockedOverlay } from './locked-overlay'
 
 // =============================================================================
@@ -18,6 +16,7 @@ export interface OpportunityCardProps {
   opportunity: Opportunity
   onDeposit?: (opportunity: Opportunity) => void
   onStartOnboarding?: (opportunity: Opportunity) => void
+  onViewDetails?: (opportunity: Opportunity) => void
   className?: string
   featured?: boolean
   hideInstitutionalTag?: boolean
@@ -31,6 +30,7 @@ export function OpportunityCard({
   opportunity,
   onDeposit,
   onStartOnboarding,
+  onViewDetails,
   className,
   featured = false,
   hideInstitutionalTag = false,
@@ -40,7 +40,6 @@ export function OpportunityCard({
     assetLogo,
     apy,
     tvl,
-    chain,
     protocol,
     type,
     onboardingStatus,
@@ -48,7 +47,6 @@ export function OpportunityCard({
 
   const isInstitutional = type === 'institutional'
   const needsOnboarding = isInstitutional && onboardingStatus !== 'approved'
-  const showOnboardingBadge = isInstitutional && onboardingStatus
 
   const handleClick = () => {
     if (needsOnboarding) {
@@ -74,37 +72,25 @@ export function OpportunityCard({
 
       {/* Card Content */}
       <div className={cn('flex flex-col p-100 gap-100', isInstitutional && !hideInstitutionalTag && 'pt-150')}>
-        {/* Header: Token + Chain */}
-        <div className="flex items-start justify-between">
-          <div className="flex items-center gap-75">
-            <TokenLogo token={assetLogo} size="lg" />
-            <div className="flex flex-col">
-              <span className="text-label-md font-semibold text-fg-primary">
+        {/* Header: Token Info with APY */}
+        <div className="flex items-center gap-75">
+          <TokenLogo token={assetLogo} size="lg" />
+          <div className="flex flex-col flex-1">
+            <div className="flex items-center gap-50 w-full">
+              <span className="text-label-md font-semibold text-fg-primary flex-1">
                 {asset}
               </span>
-              <span className="text-body-xs text-fg-tertiary">{protocol}</span>
+              <span className="text-label-md font-semibold text-fg-primary text-right">
+                APY {formatAPY(apy)}
+              </span>
             </div>
-          </div>
-
-          <div className="flex flex-col items-end gap-25">
-            <Pill type="info" appearance="subtle" size="20">
-              {getChainLabel(chain)}
-            </Pill>
-            {showOnboardingBadge && (
-              <OnboardingBadge status={onboardingStatus} />
-            )}
+            <span className="text-body-xs text-fg-tertiary">{protocol}</span>
           </div>
         </div>
 
         {/* Metrics */}
         <div className="flex items-center justify-between pt-50 border-t border-border-weak">
-          <div className="flex flex-col">
-            <span className="text-body-xs text-fg-tertiary">APY</span>
-            <span className="text-heading-h5 font-semibold text-positive">
-              {formatAPY(apy)}
-            </span>
-          </div>
-          <div className="flex flex-col items-end">
+          <div className="flex flex-col items-start">
             <span className="text-body-xs text-fg-tertiary">TVL</span>
             <span className="text-label-md font-medium text-fg-secondary">
               {formatTVL(tvl)}
@@ -113,15 +99,24 @@ export function OpportunityCard({
         </div>
 
         {/* CTA */}
-        <Button
-          variant={needsOnboarding ? 'secondary' : 'primary'}
-          size="sm"
-          fullWidth
-          onClick={handleClick}
-          className="mt-50"
-        >
-          {needsOnboarding ? 'Start Onboarding' : 'Deposit'}
-        </Button>
+        <div className="flex flex-col gap-50 mt-50">
+          <Button
+            variant={needsOnboarding ? 'secondary' : 'primary'}
+            size="sm"
+            fullWidth
+            onClick={handleClick}
+          >
+            {needsOnboarding ? 'Start Onboarding' : 'Deposit'}
+          </Button>
+          <Button
+            variant="tertiary"
+            size="sm"
+            fullWidth
+            onClick={() => onViewDetails?.(opportunity)}
+          >
+            View Details
+          </Button>
+        </div>
       </div>
     </div>
   )

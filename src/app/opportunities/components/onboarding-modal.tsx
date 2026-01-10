@@ -73,8 +73,8 @@ export function OnboardingModal({
         <div className="flex items-center gap-75 p-75 rounded-lg bg-primary mt-100">
           <TokenLogo token={opportunity.assetLogo} size="lg" />
           <div className="flex flex-col flex-1">
-            <div className="flex items-center gap-50">
-              <span className="text-label-md font-semibold text-fg-primary">
+            <div className="flex items-center gap-50 w-full">
+              <span className="text-label-md font-semibold text-fg-primary flex-1">
                 {opportunity.asset}
               </span>
               <OnboardingBadge status={opportunity.onboardingStatus} />

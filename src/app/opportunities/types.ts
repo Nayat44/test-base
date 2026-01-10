@@ -25,6 +25,7 @@ export interface Opportunity {
   type: OpportunityType
   onboardingStatus?: OnboardingStatus
   isFeatured: boolean
+  collateral?: TokenId[]
 }
 
 // =============================================================================
