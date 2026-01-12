@@ -196,3 +196,7 @@ export function getChainLabel(chain: string): string {
   }
   return labels[chain] || chain
 }
+
+export function getOpportunityById(id: string): Opportunity | undefined {
+  return opportunities.find((o) => o.id === id)
+}

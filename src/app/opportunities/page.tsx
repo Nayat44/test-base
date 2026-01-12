@@ -1,11 +1,7 @@
 'use client'
 
 import * as React from 'react'
-import {
-  Tabs,
-  TabsList,
-  TabsTrigger,
-} from '@/components/ui/tabs'
+import { useRouter } from 'next/navigation'
 import {
   OpportunityGrid,
   FilterBar,
@@ -15,15 +11,15 @@ import {
 import {
   opportunities,
 } from './mock-data'
-import type { Opportunity, Chain, SortOption, OpportunityType } from './types'
+import type { Opportunity, Chain, SortOption } from './types'
 
 // =============================================================================
 // PAGE COMPONENT
 // =============================================================================
 
 export default function OpportunitiesPage() {
+  const router = useRouter()
   // Filter state
-  const [opportunityType, setOpportunityType] = React.useState<OpportunityType>('open')
   const [chain, setChain] = React.useState<Chain | 'all'>('all')
   const [sort, setSort] = React.useState<SortOption>('apy_desc')
 
@@ -44,8 +40,7 @@ export default function OpportunitiesPage() {
   }
 
   const handleViewDetails = (opportunity: Opportunity) => {
-    console.log('Viewing details for', opportunity.asset, 'by', opportunity.protocol)
-    // In real app, would navigate to details page
+    router.push(`/opportunities/${opportunity.id}`)
   }
 
   const handleConfirmDeposit = (opportunity: Opportunity, amount: string) => {
@@ -54,23 +49,11 @@ export default function OpportunitiesPage() {
   }
 
   return (
-    <div className="flex flex-col gap-150 p-150 max-w-[1000px] min-w-[800px] mx-auto">
+    <div className="flex flex-col gap-150 p-150 w-full max-w-[1000px] mx-auto">
       {/* Opportunities Section */}
       <div className="flex flex-col gap-100">
-        {/* Type Tabs + Filters */}
-        <div className="flex items-center justify-between">
-          {/* Type Tabs */}
-          <Tabs
-            value={opportunityType}
-            onValueChange={(value) => setOpportunityType(value as OpportunityType)}
-          >
-            <TabsList variant="canvas" padding="noPadding">
-              <TabsTrigger value="open">Open</TabsTrigger>
-              <TabsTrigger value="institutional">Institutional</TabsTrigger>
-            </TabsList>
-          </Tabs>
-
-          {/* Filters */}
+        {/* Filters Row */}
+        <div className="flex items-center justify-end">
           <FilterBar
             chain={chain}
             sort={sort}
@@ -84,7 +67,6 @@ export default function OpportunitiesPage() {
           opportunities={opportunities}
           chain={chain}
           sort={sort}
-          type={opportunityType}
           onDeposit={handleDeposit}
           onStartOnboarding={handleStartOnboarding}
           onViewDetails={handleViewDetails}

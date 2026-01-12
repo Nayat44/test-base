@@ -96,12 +96,18 @@ export function OpportunityCard({
               {formatTVL(tvl)}
             </span>
           </div>
+          <div className="flex flex-col items-end">
+            <span className="text-body-xs text-fg-tertiary">Collateral Ratio</span>
+            <span className="text-label-md font-medium text-fg-secondary text-positive">
+              &gt; 150%
+            </span>
+          </div>
         </div>
 
         {/* CTA */}
-        <div className="flex flex-col gap-50 mt-50">
+        <div className="flex items-center gap-50 mt-50">
           <Button
-            variant={needsOnboarding ? 'secondary' : 'primary'}
+            variant="primary"
             size="sm"
             fullWidth
             onClick={handleClick}
